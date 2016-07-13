@@ -3,7 +3,7 @@
 <suite name="Tests" verbose="5">
   <test name="Test1">
     <classes>
-      <class name="ru.selenium.SampleTestNgTest"/>
+      <class name="ru.selenium.LoginTest"/>
     </classes>
   </test>  
 </suite>
