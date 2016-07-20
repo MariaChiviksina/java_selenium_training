@@ -149,7 +149,7 @@
     <profile>
       <id>testhost</id>
       <properties>
-        <site.url>http://testhost/</site.url>
+        <site.url>https://testhost/</site.url>
       </properties>
     </profile>
     <profile>
