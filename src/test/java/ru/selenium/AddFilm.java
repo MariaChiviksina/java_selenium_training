@@ -15,13 +15,26 @@ public class AddFilm extends TestNgTestBase{
 
   private boolean acceptNextAlert = true;
 
+  @BeforeSuite
+  private void login() {
+    driver.get(baseUrl + "/php4dvd/");
+    driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+    WebDriverWait wait =  new WebDriverWait(driver, 10);
+    wait.until(ExpectedConditions.presenceOfElementLocated(By.id("username")));
+    driver.findElement(By.id("username")).clear();
+    driver.findElement(By.id("username")).sendKeys("admin");
+    driver.findElement(By.name("password")).clear();
+    driver.findElement(By.name("password")).sendKeys("admin");
+    driver.findElement(By.name("submit")).click();
+  }
+
   @Test //добавить фильм с правильными данными
   public void testAddFilm() throws Exception {
-    driver.get(baseUrl + "/php4dvd/#!/sort/name%20asc/");
-    driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+//    driver.get(baseUrl + "/php4dvd/#!/sort/name%20asc/");
+//    driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
     WebDriverWait wait =  new WebDriverWait(driver, 30);
 
-    login();
+//    login();
 
     List<WebElement> films = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("movie_box")));
     int countBeforAdd = films.size();
@@ -94,13 +107,13 @@ public class AddFilm extends TestNgTestBase{
     Assert.assertTrue(error.isDisplayed());
   }
 
-  private void login() {
+/*  private void login() {
     driver.findElement(By.id("username")).clear();
     driver.findElement(By.id("username")).sendKeys("admin");
     driver.findElement(By.name("password")).clear();
     driver.findElement(By.name("password")).sendKeys("admin");
     driver.findElement(By.name("submit")).click();
-  }
+  }*/
 
   private String closeAlertAndGetItsText() {
     try {

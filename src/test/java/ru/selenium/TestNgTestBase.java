@@ -2,6 +2,7 @@ package ru.selenium;
 
 import java.io.IOException;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.Capabilities;
 
@@ -23,7 +24,7 @@ public class TestNgTestBase {
   protected static String baseUrl;
   protected static Capabilities capabilities;
 
-  protected WebDriver driver;
+  protected static WebDriver driver;
 
   @BeforeSuite
   public void initTestSuite() throws IOException {
