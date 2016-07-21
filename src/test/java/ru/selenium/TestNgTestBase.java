@@ -24,7 +24,7 @@ public class TestNgTestBase {
   protected static String baseUrl;
   protected static Capabilities capabilities;
 
-  protected static WebDriver driver;
+  protected WebDriver driver;
 
   @BeforeSuite
   public void initTestSuite() throws IOException {
@@ -37,7 +37,7 @@ public class TestNgTestBase {
     WebDriverFactory.setMode(WebDriverFactoryMode.THREADLOCAL_SINGLETON);
   }
 
-  @BeforeMethod
+  @BeforeSuite
   public void initWebDriver() {
     driver = WebDriverFactory.getDriver(gridHubUrl, capabilities);
   }
