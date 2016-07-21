@@ -35,14 +35,15 @@ public class SearchFilm extends TestNgTestBase {
     @Test // фильм найден
     public void testFoundFilm() throws Exception {
         List<WebElement> films = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("movie_box")));
-
+        filmIwant = "Ice Age";
+//        addFilm(filmIwant);
         WebElement searchField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("q")));
         searchField.clear();
-        filmIwant = "Ice Age";
         searchField.sendKeys(filmIwant + Keys.RETURN);
-
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         Boolean rsltsInvsbl = wait.until(ExpectedConditions.invisibilityOfAllElements(films));
         Assert.assertTrue(rsltsInvsbl);
+        driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
 
         List<WebElement> searchResult = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("movie_box")));
         for (WebElement webElement : searchResult) {
@@ -66,5 +67,24 @@ public class SearchFilm extends TestNgTestBase {
         String title = notFound.getText();
 
         Assert.assertTrue(title.equals("No movies where found."));
+    }
+
+    private void addFilm(String filmName){
+
+        WebElement addMovieBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("img[alt=\"Add movie\"]")));
+        addMovieBtn.click();
+
+        WebElement imdbSearch = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("imdbsearch")));
+        imdbSearch.clear();
+        imdbSearch.sendKeys(filmName);
+
+        driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
+        driver.findElement(By.linkText(filmName)).click();
+
+        WebElement saveBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("img[alt=\"Save\"]")));
+        saveBtn.click();
+
+        WebElement logoBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("center")));
+        logoBtn.click();
     }
 }
