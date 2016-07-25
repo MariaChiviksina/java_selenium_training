@@ -1,23 +1,29 @@
 package ru.selenium;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.testng.Assert.assertTrue;
+
 /**
  * Created by Maria on 20.07.2016.
  */
 public class SearchFilm extends TestNgTestBase {
     private WebDriverWait wait;
-    private String filmIwant;
+    private String filmIwant = "Jaws";
+    private boolean acceptNextAlert = true;
+
 
     @BeforeSuite
     public void login() {
@@ -30,13 +36,12 @@ public class SearchFilm extends TestNgTestBase {
         driver.findElement(By.name("password")).clear();
         driver.findElement(By.name("password")).sendKeys("admin");
         driver.findElement(By.name("submit")).click();
+        addFilm(filmIwant);
     }
 
     @Test // фильм найден
     public void testFoundFilm() throws Exception {
         List<WebElement> films = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("movie_box")));
-        filmIwant = "Ice Age";
-//        addFilm(filmIwant);
         WebElement searchField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("q")));
         searchField.clear();
         searchField.sendKeys(filmIwant + Keys.RETURN);
@@ -57,8 +62,8 @@ public class SearchFilm extends TestNgTestBase {
 
         WebElement searchField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("q")));
         searchField.clear();
-        filmIwant = "klflvk";
-        searchField.sendKeys(filmIwant + Keys.RETURN);
+        String filmNotFound = "klflvk";
+        searchField.sendKeys(filmNotFound + Keys.RETURN);
 
         Boolean rsltsInvsbl = wait.until(ExpectedConditions.invisibilityOfAllElements(films));
         Assert.assertTrue(rsltsInvsbl);
@@ -69,8 +74,27 @@ public class SearchFilm extends TestNgTestBase {
         Assert.assertTrue(title.equals("No movies where found."));
     }
 
-    private void addFilm(String filmName){
+    @AfterSuite
+    public void testDeleteFilm() throws Exception {
+        WebElement searchField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("q")));
+        searchField.clear();
+        searchField.sendKeys(Keys.RETURN);
 
+        WebElement cover = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("movie_box")));
+        cover.click();
+        WebElement removeBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("img[alt=\"Remove\"]")));
+        removeBtn.click();
+
+        assertTrue(closeAlertAndGetItsText().matches("^Are you sure you want to remove this[\\s\\S]$"));
+
+        WebElement results1 = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("results")));
+        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        List<WebElement> films1 = results1.findElements(By.className("movie_box"));
+        driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+
+    }
+
+    private void addFilm(String filmName){
         WebElement addMovieBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("img[alt=\"Add movie\"]")));
         addMovieBtn.click();
 
@@ -87,4 +111,20 @@ public class SearchFilm extends TestNgTestBase {
         WebElement logoBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.className("center")));
         logoBtn.click();
     }
+
+    private String closeAlertAndGetItsText() {
+        try {
+            Alert alert = driver.switchTo().alert();
+            String alertText = alert.getText();
+            if (acceptNextAlert) {
+                alert.accept();
+            } else {
+                alert.dismiss();
+            }
+            return alertText;
+        } finally {
+            acceptNextAlert = true;
+        }
+    }
+
 }
